@@ -1,18 +1,25 @@
 'use client';
 import { useFormik } from 'formik';
 import * as Yup from "yup"
-import React, { use, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
+import getEventDetails from '../components/GetEventDetails';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../store/slices/eventSlice';
 // import { useRouter } from 'next/router';
+
+
 const initialValues = {
     email:"",
     password:""
 }
 export default function page() {
+  let token = ''
+  const dispatch = useDispatch()
     const router = useRouter()
    const loginSchema = Yup.object({
     email:Yup.string().test(
@@ -27,15 +34,24 @@ export default function page() {
         initialValues:initialValues,
         validationSchema:loginSchema,
         onSubmit:async (values)=>{
-          await axios.post('http://192.168.1.68:8000/system/login',values,{withCredentials:true}).
+          await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`,values,{withCredentials:true}).
           then(response=>{
             console.log('response',response);
             //   router.push('/')
-            if(response.status == 200){
-                toast.success(response.data.message)
-                router.push('/dashboard')
-                // const token =  Cookies.get('planit');
-               
+            if (response.status == 200) {
+              token = response.headers['verification'];
+              
+              // Object.entries(response.headers).forEach(([key, value]) => {
+              //   console.log(`${key}: ${value}`);
+              //   if(key == 'verification'){
+              //     token = value;
+              //   }
+              // });
+              dispatch(setToken(token))
+              localStorage.setItem('verification',token)
+              toast.success("signin Scuuesful!")
+              router.push('/otp')
+    
             }
           })
           .catch(error => {

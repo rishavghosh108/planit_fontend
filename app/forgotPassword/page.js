@@ -22,7 +22,7 @@ export default function page() {
     initialValues:initialValues,
     validationSchema:emailVerifySchema,
     onSubmit:async(values)=>{
-      const response = await axios.post('http://192.168.1.68:8000/system/forgot-password-verify',values)
+      const response = await axios.post(`${process.env.NEXT_API_URL}/system/forgot-password-verify`,values)
       console.log("verify",response)
       if(response.status == 200){
         router.push('/forgotPassword/resetPassword')

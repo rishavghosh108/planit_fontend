@@ -10,7 +10,7 @@ export default function DashboardNavbar() {
   const router = useRouter()
   const pathname = usePathname()
   const logOut=async()=>{
-    const response = await axios.get('http://192.168.1.37:8000/system/logout')
+    const response = await axios.get(`${process.env.NEXT_API_URL}/logout`)
     console.log("logout response",response)
     if(response.status == 200){
       toast.success(response.data.message)

@@ -19,7 +19,7 @@ export default function page() {
     initialValues:initialValues,
     validationSchema:emailVerifySchema,
     onSubmit:async(values)=>{
-      const response = await axios.post('http://192.168.1.68:8000/system/forgot-password-reset',values)
+      const response = await axios.post(`${process.env.NEXT_API_URL}/forgot-password-reset`,values)
       console.log("verify",response)
     }
 

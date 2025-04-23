@@ -5,10 +5,12 @@ import axios from 'axios'
 import * as Yup from "yup"
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
+import { useSelector } from 'react-redux'
 const initialValues = {
     email_or_phone:""
 }
 export default function otp() {
+    const token = useSelector((state)=>state.user.token)
     const router = useRouter()
     const emailVerifySchema = Yup.object({
         otp:Yup.string().test(
@@ -22,7 +24,7 @@ export default function otp() {
     initialValues:initialValues,
     validationSchema:emailVerifySchema,
     onSubmit:async(values)=>{
-      const response = await axios.post('http://192.168.1.68:8000/system/forgot-password-verify',values)
+      const response = await axios.post(`${process.env.NEXT_API_URL}/forgot-password-verify`,values)
       console.log("verify",response)
       if(response.status == 200){
         router.push('/forgotPassword/resetPassword')

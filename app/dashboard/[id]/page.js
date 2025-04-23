@@ -1,10 +1,30 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import Link from 'next/link';
+import cards from './cards/page';
+import { useRouter } from 'next/navigation';
+import { setEvent } from '@/app/store/slices/eventSlice';
 
 
 const VendorPage = () => {
+  const dispatch = useDispatch()
+  const route = useRouter()
+  const [eventData,setEventData] = useState([])
+  useEffect(()=>{
+    const getEvent = async()=>{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events`)
+        console.log('eventresponse',response.data.data)
+        setEventData(response.data.data)
+        dispatch(setEvent(response.data.data))
+      } 
+    getEvent()
+    },[])
+    console.log('event',eventData)
+
   const vendors = [
     'Beauty',
     'Bridal Salons',
@@ -18,23 +38,29 @@ const VendorPage = () => {
     'Wedding Planners',
     'View all'
   ]
+  console.log('vendor',eventData)
   const params = useParams();
-  const event = params?.event?.toString() || 'default'; 
-  const image = `/${event.toLowerCase()}.jpg`;
+  console.log('params',params)
+  // const event = params?.event?.toString() || 'default'; 
+  // const image = `/${event.toLowerCase()}.jpg`;
+  const currentEvent = eventData.find((event) => event.id == params.id);
+
   return (
+    <>
+    {currentEvent? (
     <main className="p-8 space-y-8 min-h-screen bg-cover flex flex-col"
-    style={{ backgroundImage: `url(${image})` }}
+    style={{ backgroundImage: `url(${currentEvent.file_path})` }}
     >
       {/* Top banner */}
       <div className="bg-gray-400 max-w-lg min-w-2xl text-center m-auto p-4 font-bold text-lg text-black rounded-lg">
-        Let's plan your {params.event.toLowerCase()} starting with our checklist
+        Let's plan your {currentEvent.event_type.toLowerCase()} starting with our checklist
       </div>
 
       {/* Invitation buttons */}
       <div className="flex flex-col items-center space-y-4">
-        <button className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
+        <Link href={`/dashboard/${params.id}/cards`} className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
           Generate digital invitation card
-        </button>
+        </Link>
         <button className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
           Import a guest list
         </button>
@@ -54,8 +80,12 @@ const VendorPage = () => {
           ))}
         </div>
       </section>
-    </main>
-  )
+    </main>)
+
+   : null}
+  </>
+   )
+
 }
 
 export default VendorPage

@@ -1,14 +1,28 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import  Link  from 'next/link'
 import axios from 'axios'
 import * as Yup from "yup"
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
+import { NextRequest,NextResponse } from 'next/server'
+import { GetToken } from '../api/verify/route'
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import { setToken } from '../store/slices/eventSlice'
 const initialValues = {
     otp:""
 }
 export default function otp() {
+  // const {token} = GetToken()
+  //     console.log('token',token)
+  const dispatch = useDispatch()
+   useEffect(()=>{
+      const token =  localStorage.getItem('verification')
+      dispatch(setToken(token))
+     },[])
+     const token = useSelector((state)=>state.user.verification)
+    console.log('token',token)
     const router = useRouter()
     const otpVerifySchema = Yup.object({
         otp:Yup.number().required("otp is required"),
@@ -18,10 +32,19 @@ export default function otp() {
     validationSchema:otpVerifySchema,
     onSubmit:async(values)=>{
         console.log('value',values)
-      const response = await axios.post('http://192.168.1.68:8000/system/verify',values,{withCredentials:true})
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/verify`,values,{withCredentials:true,
+        headers:{
+          'verification':`${token}`,
+          'Content-Type': 'application/json',
+          
+      }})
       console.log("verify",response)
       if(response.status == 200){
-       
+        toast.success('Otp Verification successful')
+        console.log('otp response',response)
+        localStorage.removeItem('verification')
+        dispatch(setToken(null))
+        router.push('/dashboard')
       }
     }
 
