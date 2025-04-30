@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import getEventDetails from '../components/GetEventDetails';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../store/slices/eventSlice';
+import { setVerificationToken } from '../store/slices/eventSlice';
 // import { useRouter } from 'next/router';
 
 
@@ -47,7 +47,7 @@ export default function page() {
               //     token = value;
               //   }
               // });
-              dispatch(setToken(token))
+              dispatch(setVerificationToken(token))
               localStorage.setItem('verification',token)
               toast.success("signin Scuuesful!")
               router.push('/otp')
