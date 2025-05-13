@@ -3,17 +3,29 @@
 import { all } from "axios";
 import { useState, useEffect, useRef } from "react";
 
-export default function EditableText({ id, defaultText, className,fields }) {
-  const [text, setText] = useState(defaultText);
+export default function EditableText({ id, defaultText, className,field }) {
+  
+  const [text, setText] = useState(defaultText || "");
   const [editing, setEditing] = useState(false);
   const textRef = useRef(null);
   const textareaRef = useRef(null);
 
   useEffect(() => {
-    const savedText = localStorage.getItem(id)
+    if (defaultText !== undefined) {
+      setText(defaultText);
+      localStorage.setItem(id, defaultText);
+    }
+  }, [defaultText, id]);
+
+
+  useEffect(() => {
+    
+    const savedText = localStorage.getItem(id)   
 ;
     if (savedText) setText(savedText);
+  
   }, [id]);
+
 
   useEffect(() => {
     if (editing && textareaRef.current && textRef.current) {
@@ -28,6 +40,8 @@ export default function EditableText({ id, defaultText, className,fields }) {
       textareaRef.current.focus();
     }
   }, [editing]);
+  console.log('defaultText',text);
+
 useEffect(()=>{
     // localStorage.clear()
     localStorage.setItem(id, text);
@@ -51,7 +65,7 @@ useEffect(()=>{
       <p
         ref={textRef}
         className={`${className} whitespace-pre-line`}
-        onClick={() => setEditing(fields? false :true)}
+        onClick={() => setEditing(field? false :true)}
         style={{ visibility: editing ? "hidden" : "visible" }}
       >
         {text}

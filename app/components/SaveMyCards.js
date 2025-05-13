@@ -8,7 +8,8 @@ const saveMyCards = async (id,router) => {
     const parseData = JSON.parse(weddingData);
     let cardsArray = []
     cardsArray = [parseData]
-    console.log('cardsArray', cardsArray);
+    let cardDetails = JSON.parse(cardsArray[0]['cards'])
+    console.log('cardsArray', cardDetails.event_id);
     const fields = cardsArray.map(({ cards, authorization, ...rest }) => ({
         ...rest,
         cardId: id
@@ -26,10 +27,9 @@ const saveMyCards = async (id,router) => {
         if(response.data.status == true){
             for(let key in fields[0]){
                 localStorage.removeItem(`${key}`)
-               
             }
             toast.success(response.data.message)
-            router.push('/dashboard')
+            router.push(`/dashboard/${cardDetails.event_id}`)
         }
         
     })

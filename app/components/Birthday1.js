@@ -2,7 +2,7 @@ import DeleteMyCards from "./DeleteMyCards";
 import EditableText from "./EditableText";
 import saveMyCards from "./SaveMyCards";
 
-export default function Birthday1({id,router,fields,handleDelete}) {
+export default function Birthday1({id,router,fields,handleDelete,handleShare}) {
   return (
     <div className={`${!fields ?"min-h-screen mt-20 flex flex-col  items-center justify-center bg-[#f7f3f0] p-4" : "min-h-screen flex flex-col  items-center justify-center bg-[#f7f3f0] p-4"}`}>
     <div className="relative bg-[#fffaf6] w-[370px] h-[512px] shadow-2xl rounded-lg border border-[#ebdcd2] overflow-hidden">
@@ -10,7 +10,7 @@ export default function Birthday1({id,router,fields,handleDelete}) {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/birthdaybg.jpg"
+          src="/images/birthdaybg.jpg"
           alt="Confetti Background"
           className="w-full h-full object-cover opacity-60"
         />
@@ -23,13 +23,13 @@ export default function Birthday1({id,router,fields,handleDelete}) {
             id="birthday-title"
             defaultText="BIRTHDAY"
             className="text-4xl font-normal text-[#3dcedb] tracking-wide yeseva-one-regular"
-            fields= {fields? {fields}:null}
+            field= {fields}
           />
           <EditableText
             id="birthday-subtitle"
             defaultText="Party"
             className="text-6xl italic text-[#ec7171] windsong-regular pl-[50px] mt-[-13px]"
-            fields= {fields? {fields}:null}
+            field= {fields}
           />
         </div>
 
@@ -45,7 +45,7 @@ export default function Birthday1({id,router,fields,handleDelete}) {
           id="birthday-name-age"
           defaultText={`${fields? fields['birthday-name-age']: "JOHN IS \nTURNING TEN!"}`}
           className="text-lg font-medium text-[#580303] mb-10 noto-sans-mono-font leading-[1.5] whitespace-pre-line"
-          fields= {fields? {fields}:null}
+          field= {fields}
 
         />
 
@@ -54,27 +54,27 @@ export default function Birthday1({id,router,fields,handleDelete}) {
           id="birthday-details-1"
           defaultText={`${fields? fields['birthday-details-1']: "saturday, may 2nd\nat four o'clock"}`}
           className="text-sm text-[#580303] leading-snug mb-4 roboto-mono-font font-semibold whitespace-pre-line"
-          fields= {fields? {fields}:null}
+          field= {fields}
             
         />
         <EditableText
           id="birthday-details-2"
           defaultText={`${fields? fields['birthday-details-2'] : "1602 hill street\napartment 154\nappletree, iowa"}`}
           className="text-sm text-[#580303] leading-snug mb-4 roboto-mono-font font-semibold whitespace-pre-line"
-          fields= {fields? {fields}:null}             
+          field= {fields}             
         />
         <EditableText
           id="birthday-rsvp"
           defaultText={`${fields? fields['birthday-rsvp']: "rsvp to:\njane@gmail.com"}`}
           className="text-sm text-[#580303] leading-snug mb-2 roboto-mono-font font-semibold whitespace-pre-line"
-          fields= {fields? {fields}:null}             
+          field = {fields}             
         />
       </div>
     </div>
       {!fields?<button onClick={()=>saveMyCards(id,router)} className="text-black text-2xl font-bold rounded-xl w-30 ml-5 mb-40 h-10 align-middle text-center cursor-pointer bg-orange-500  hover:bg-orange-600">Save</button>:null}
       <div className="mt-5">
-       {fields? <button onClick={handleDelete} className="text-black text-2xl font-bold rounded-xl w-30 ml-5 mb-40 h-10 align-middle text-center cursor-pointer bg-red-500  hover:bg-red-600">Delete</button>:null}
-       {fields? <button className="text-black text-2xl font-bold rounded-xl w-30 ml-5 mb-40 h-10 align-middle text-center cursor-pointer bg-blue-500  hover:bg-blue-600">Share</button>:null}
+       {handleDelete? <button onClick={handleDelete} className="text-black text-2xl font-bold rounded-xl w-30 ml-5 mb-40 h-10 align-middle text-center cursor-pointer bg-red-500  hover:bg-red-600">Delete</button>:null}
+       {handleShare? <button onClick={handleShare} className="text-black text-2xl font-bold rounded-xl w-30 ml-5 mb-40 h-10 align-middle text-center cursor-pointer bg-blue-500  hover:bg-blue-600">Share</button>:null}
        </div>
       </div>
   );

@@ -32,7 +32,7 @@ export default function otp() {
     validationSchema:otpVerifySchema,
     onSubmit:async(values)=>{
         console.log('value',values)
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/verify`,values,{withCredentials:true,
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/verify`,values,{withCredentials:true,
         headers:{
           'verification':`${token}`,
           'Content-Type': 'application/json',

@@ -8,6 +8,7 @@ import Wedding1 from './Wedding1'
 import Birthday1 from './Birthday1'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import ShareCard from './ShareCard'
 export default  function MyCards() {
   const router = useRouter()
     console.log('hi this is from my cards')
@@ -34,13 +35,18 @@ export default  function MyCards() {
     },[setCards])
 
     const handleDelete = async(cardId)=>{
-      await axios.post(`http://192.168.1.37:8000/system/card-delete/${cardId}`).then((response)=>{
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/card-delete/${cardId}`).then((response)=>{
         if(response.data.success == true){
             toast.success(response.data.message)
             setCards((prevCards) => prevCards.filter(card => card.card_detail_id != cardId));
         }
     }
    )
+    }
+
+    const handleShare = async(cardDetailId)=>{
+      // localStorage.setItem('fields',JSON.stringify(fields))
+      router.push(`/dashboard/myCards/share/${cardDetailId}`)
     }
 
     console.log('mycard response  hello cards',cards);
@@ -62,7 +68,7 @@ export default  function MyCards() {
                 key={card.card_id}
                 className="bg-white rounded-2xl shadow-md  hover:shadow-2xl border border-gray-100 transition duration-300 overflow-hidden"
               >
-                <Wedding1 fields={card.fields} handleDelete={()=>handleDelete(card.card_detail_id)} />
+                <Wedding1 fields={card.fields} handleShare={()=>handleShare(card.card_detail_id)} handleDelete={()=>handleDelete(card.card_detail_id)} />
               </div>
             );
           if (card.card_id == 2)
@@ -71,7 +77,7 @@ export default  function MyCards() {
                 key={card.card_id}
                 className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 transition duration-300 overflow-hidden"
               >
-                <Birthday1 fields={card.fields} handleDelete={()=>handleDelete(card.card_detail_id)}/>
+                <Birthday1 fields={card.fields} handleShare={()=>handleShare(card.card_detail_id)} handleDelete={()=>handleDelete(card.card_detail_id)}/>
               </div>
             );
         })}

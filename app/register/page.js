@@ -31,7 +31,7 @@ export default function Register() {
       'must be a valid email',
        value=> /\S+@\S+\.\S+/.test(value)
     ),
-    password: YUP.string().min(6).required('Password is required'),
+    password: YUP.string().min(8).required('Password is required'),
     role_id: YUP.string().required('Role selection is required')
   });
 
@@ -40,7 +40,7 @@ export default function Register() {
     validationSchema: signupSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, values, { withCredentials: true });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/signup`, values, { withCredentials: true });
         if (response.status === 200) {
           const token = response.headers.verification;
           dispatch(setVerificationToken(token));
