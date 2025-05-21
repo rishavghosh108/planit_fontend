@@ -21,7 +21,7 @@ export default function GetEventDetails(){
 
     useEffect(()=>{
         const getEvent = async()=>{
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events`)
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/events`)
             setEventData(response.data.data)
           } 
         getEvent()

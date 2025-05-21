@@ -1,31 +1,35 @@
 'use client'
 
+import axios from 'axios'
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 export default function VendorDetails() {
+  const params = useParams()
+  console.log('params',params);
+    const [vendorDetails,setVendorDetails] = useState({})
+  
     const [currentIndex,setCurrentIndex] = useState(0)
     const [hovering,setHovering] = useState(false)
-    const vendor = {
-        logo: '/images/catering-logo.jpg',
-        name: 'Catering',
-        images: [
-          '/images/catering-image1.jpg',
-          '/images/catering-image4.jpeg',
-          '/images/catering-image3.jpg',
-        ],
-        category: 'Catering',
-        location: 'Kolkata, India',
-        rating: 4.5,
-      };
-
+     useEffect(()=>{
+       const getVendorDetails = async()=>{
+          await axios.get(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/businessShow/${params.id}`).then((response)=>{
+            console.log('singleVendor',response);
+            setVendorDetails(response.data)
+          })
+       }
+       getVendorDetails()
+     },[])
       useEffect(()=>{
-        if(!hovering || vendor.images.length <= 1) return;
+        if(!hovering || vendorDetails.business_images?.length <= 1) return;
         const interval = setInterval(()=>{
-            setCurrentIndex((prev)=>(prev+1) % vendor.images.length)
+            setCurrentIndex((prev)=>(prev+1) % vendorDetails.business_images?.length)
         },1500)
         return ()=>clearInterval(interval)
-      },[hovering,vendor.images.length])
+      },[hovering,vendorDetails.business_images?.[0]])
+                  console.log('singleVendor34',vendorDetails?.business_images?.[0]);
+
     return (
     <div className='min-h-screen bg-gray-200'>
           <h1 className='text-black text-4xl text-center pt-8 font-bold'>Vendor Details</h1>
@@ -42,25 +46,28 @@ export default function VendorDetails() {
             /> */}
             <div >
             <div className="relative w-[367px] h-[197px] overflow-hidden rounded-xl shadow-md cursor-pointer" onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>{setHovering(false);setCurrentIndex(0)}}>
-              <Image
-                src={vendor.images[currentIndex]}
+              {vendorDetails?.business_images?.[currentIndex] && (
+                <div className='relative w-full h-64 rounded-lg overflow-hidden border'>
+                <Image
+                src={vendorDetails.business_images?.[currentIndex].business_image}
                 alt="Main"
-                width={367}
-                height={167}
+                fill
                 className="object-cover transition-opacity duration-700 ease-in-out"
                 quality={100}
               />
               </div>
+            )}
+              </div>
               <div className="flex justify-between mt-4 text-gray-700 font-medium">
-                <p>Business Name: <span className="font-semibold text-black">Catering</span></p>
-                <p>Category: <span className="font-semibold text-black">Caterer</span></p>
+                <p>Business Name: <span className="font-semibold text-black">{vendorDetails.business_name}</span></p>
+                <p>Category: <span className="font-semibold text-black">{vendorDetails.category}</span></p>
               </div>
             </div>
           </div>
       
           <div className="w-full ml-40  text-gray-600 space-y-2">
-            <p><span className="font-semibold text-gray-800">Description:</span> Delicious, custom catering for all events.</p>
-            <p><span className="font-semibold text-gray-800">Location:</span>Kolkata,India</p>
+            <p><span className="font-semibold text-gray-800">Description:</span>{vendorDetails.description}</p>
+            <p><span className="font-semibold text-gray-800">Location:</span>{vendorDetails.location}</p>
           </div>
       
           <div className="w-full flex justify-center">

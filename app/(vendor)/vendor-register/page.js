@@ -1,7 +1,9 @@
 'use client';
 import axios from 'axios';
 import { useFormik } from 'formik';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 
 const initialValues = {
@@ -14,6 +16,7 @@ const initialValues = {
 };
 
 const VendorRegistration = () => {
+  const router = useRouter()
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [logoPreview, setLogoPreview] = useState(null);
@@ -26,27 +29,25 @@ const VendorRegistration = () => {
     location: Yup.string().required('Location is required')
   });
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit,isSubmitting,setSubmitting} = useFormik({
     initialValues: initialValues,
     validationSchema: VendorRegistrationSchema,
 
     onSubmit: async () => {
-      console.log('business logo', values.businessLogo.name);
-            console.log('formik values', values);
-
+      setSubmitting(true)
       const formData = new FormData();
       formData.append('businessName', values.businessName);
       formData.append('category', values.category);
-      formData.append('description', values.description);
+      formData.append('description', values.description);  
       formData.append('location', values.location);
       formData.append('businessLogo', values.businessLogo);
       values.businessImage.forEach((file) => {
-        formData.append('businessImage[]', file);
+        formData.append('businessImage[]', file);  
       });
       const user_token = localStorage.getItem('authorization');
       console.log('vendor authorization', user_token);
       await axios.post(
-        'http://192.168.1.37:8000/system/store_vendors',
+        `${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/store_vendors`,
         formData,
         {
           withCredentials: true,
@@ -56,9 +57,13 @@ const VendorRegistration = () => {
         }
       ).then((response) => {
         console.log('vendor-register', response);
+        if(response.status == 201){
+          toast.success(response.data.message)
+          router.push('/vendors')
+        }
       }).catch((error) => {
         console.log('error', error);
-
+        setSubmitting(false)
       });
     }
   });
@@ -257,9 +262,13 @@ const VendorRegistration = () => {
 
           <button
             type="submit"
-            className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md"
-          >
-            Register Vendor
+            disabled={isSubmitting}
+            className={`w-full mt-6 font-semibold py-2 px-4 rounded-lg shadow-md text-white ${
+    isSubmitting
+      ? 'bg-gray-400 cursor-not-allowed'
+      : 'bg-indigo-600 hover:bg-indigo-700'
+  }`} >
+           {isSubmitting ? 'Registering Vendor....': 'Register Vendor'}
           </button>
         </form>
       </div>
