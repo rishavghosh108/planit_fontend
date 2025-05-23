@@ -21,7 +21,7 @@ const VendorProfile = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 min-h-screen md:grid-cols-3 gap-6 px-4 py-8 bg-gray-100 ">
+      <div className="grid grid-cols-1 w-full min-h-screen md:grid-cols-3 gap-6 py-8 bg-gray-100 ">
         {vendors.map((vendor) => (
           <VendorCard key={vendor.id} vendor={vendor} />
         ))}

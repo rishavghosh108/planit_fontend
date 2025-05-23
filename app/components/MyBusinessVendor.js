@@ -19,6 +19,10 @@ export default function MyBusinessCard({ vendor, deleteBusinessByUser }) {
   }, [vendor.business_images])
   const handleRemoveImage = async (id) => {
     console.log('remove image', id);
+    const confirm = window.confirm('Are you sure you want to delete this image?')
+     if(!confirm){
+      return
+     }
     await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/singleImgDelete/${vendor.id}/${id}`).then((response) => {
       if (response.status == 200) {
         toast.success(response.data.message)
@@ -72,7 +76,7 @@ export default function MyBusinessCard({ vendor, deleteBusinessByUser }) {
   return (
     <>
       <div key={vendor.id} className=''>
-        <div className=" w-[480px] h-[500px] max-w-lg mx-auto p-6 grid gap-4 bg-sky-200 shadow-md rounded-4xl text-black hover:scale-105 transition duration-200">
+        <div className=" w-[480px] h-[590px] max-w-lg mx-auto p-6 grid gap-4 space-y-1 bg-sky-300 hover:bg-sky-400 shadow-md rounded-4xl text-black hover:scale-105 transition duration-200">
           <div className="flex items-center space-x-4 overflow-hidden">
             <Image
               src={vendor.business_logo}
@@ -110,7 +114,7 @@ export default function MyBusinessCard({ vendor, deleteBusinessByUser }) {
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(img.id)}
-                      className="absolute top-1 z-50 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center shadow-md transition opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+                      className="absolute top-1 z-50 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center shadow-md transition opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto "
                       title="Remove Image"
                     >
                         <RiDeleteBinLine />
@@ -184,11 +188,12 @@ export default function MyBusinessCard({ vendor, deleteBusinessByUser }) {
               ⭐ 4 / 5
             </span>
           </div>
+          <div className='mt-4 w-sm flex justify-around m-auto'>
+          <Link href={`/vendors/my-business/update/${vendor.id}`} className='text-white text-xl  w-30 rounded-xl text-center bg-blue-500 hover:bg-blue-600 cursor-pointer'>Edit</Link>
+          <button onClick={() => deleteBusinessByUser(vendor.id)} className='text-white text-xl  bg-red-500 w-30 rounded-xl hover:bg-red-600 cursor-pointer'>Delete</button>
         </div>
-        <div className='mt-4 w-sm flex justify-around m-auto'>
-          <Link href={`/vendors/my-business/update/${vendor.id}`} className='text-black text-2xl border-2 w-30 rounded-xl text-center border-blue-500 hover:border-green-500 cursor-pointer'>Edit</Link>
-          <button onClick={() => deleteBusinessByUser(vendor.id)} className='text-black text-2xl border-2 border-red-500 w-30 rounded-xl hover:border-red-800 cursor-pointer'>Delete</button>
         </div>
+        
       </div>
     </>
   )

@@ -39,6 +39,8 @@ export default function page() {
     console.log('authorization',authorizationToken);
     
     const deleteBusinessByUser = async(vendorId)=>{
+        const confirm = window.confirm('Are you sure you want to delete the Vendor?')
+        if(!confirm) return
        await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/vendorDelete/${vendorId}`,{},{
         headers:{
              Authorization: `Bearer ${authorizationToken}`,

@@ -40,9 +40,9 @@ export default function VendorNavbar() {
   };
 
   const navItems = [
-    { name: 'My Business', href: '/vendors/my-business' },
-    { name: 'Create Events', href: '/dashboard/CreateEvents' },
-    { name: 'Event Details', href: '/dashboard/EventDetails' },
+    { name: 'My Business', href: '/vendors/my-business'},
+    { name: 'Create New Business', href: '/vendor-register'},
+    { name: 'My Bookings', href: '/vendors/my-bookings'},
     
   ];
 
@@ -50,7 +50,7 @@ export default function VendorNavbar() {
     <div className="bg-white w-full">
       <nav className="bg-white shadow-xs p-1">
         <div className="flex items-center justify-between">
-          <Image src="/images/planIt.png" alt="home image" width={70} height={50} />
+          <Image src="/images/planIt.png" alt="home image" width={70} height={50}/>
 
           <div className="hidden md:flex space-x-3 items-center">
             {navItems.map((item) => (

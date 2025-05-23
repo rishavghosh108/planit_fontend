@@ -12,7 +12,7 @@ export default function CheckList() {
     const params = useParams()
     useEffect(() => {
         const getCheckList = async () => {
-            await axios.get(`http://192.168.1.37:8000/system/events/${params.id}/checklists`).then((response) => {
+            await axios.get(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/events/${params.id}/checklists`).then((response) => {
                 if (response.data.status == true) {
                     setChecklists(response.data.checklists)
                 }
@@ -39,7 +39,7 @@ export default function CheckList() {
         setRitual(e.target.value)
     }
     const generateTask = async()=>{
-       await axios.post(`http://192.168.1.37:8000/system/events/${params.id}/generate-itinerary`,{ritual:ritual,selected_checklist_ids:selectedItem}).then((response)=>{
+       await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/events/${params.id}/generate-itinerary`,{ritual:ritual,selected_checklist_ids:selectedItem}).then((response)=>{
         console.log('itinirary',response);
         setItinerary(response.data.itinerary)
        })
