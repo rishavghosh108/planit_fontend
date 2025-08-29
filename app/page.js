@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import GetEventDetails from "./components/GetEventDetails";
 
 export default function Dashboard() {
   const [menuOpen,setMenuOpen] = useState()
@@ -21,10 +22,10 @@ export default function Dashboard() {
 
   }
   return (
-  <div className="bg-white">
+  <div className="w-full min-h-screen">
       <nav className="bg-white flex justify-end flex-row gap-5 pt-5">
-       <Link href={'/login'} className="text-lg px-3 py-1 rounded-md hover:bg-green-600 bg-green-500 font-bold text-black btn cursor-pointer">Login</Link>
-       <Link href={'/register'} className="text-black text-lg font-bold mr-5">Are you a Vendor?</Link>
+       <Link href={'/login'} className="text-lg px-3 py-1 rounded-md hover:border-green-600 border-2 border-blue-600 font-bold text-black btn cursor-pointer">Login</Link>
+       <Link href={'/vendor-register'} className="text-black px-3 py-1 rounded-md text-lg font-bold mr-5 border-2 border-blue-600 hover:border-green-600">Vendors?</Link>
        </nav>
     <div className="relative flex flex-col md:flex-row min-h-screen bg-white p-8 items-center justify-center gap-12">
     {/* Left Section */}
@@ -53,7 +54,7 @@ export default function Dashboard() {
   
         {/* Couple image */}
         <Image 
-          src="/couple.jpeg"
+          src="/images/couple.jpeg"
           alt="Happy Couple"
           width={400}
           height={450}
@@ -63,7 +64,7 @@ export default function Dashboard() {
   
         {/* Decorative leaves OVERLAY */}
         <Image 
-          src="/leaves2.png"
+          src="/images/leaves2.png"
           alt="Decorative leaves overlay"
           width={200}
           height={200}
@@ -72,7 +73,7 @@ export default function Dashboard() {
   
         {/* Text content */}
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-800">Rishav & Ranu Mondal</h2>
+          <h2 className="text-2xl font-bold text-gray-800"></h2>
           <p className="text-gray-600 mt-2 text-sm">SUNDAY, OCTOBER 9, 2022</p>
           <p className="text-gray-600 text-sm">LAS VEGAS, NEVADA</p>
           <p className="mt-4 text-gray-600 text-sm">
@@ -85,6 +86,7 @@ export default function Dashboard() {
     </div>
   
   </div>
+    <GetEventDetails/>
   </div>
   
 );

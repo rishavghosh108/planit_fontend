@@ -70,10 +70,15 @@
 // }
 
 
+import ChatBot from "../components/ChatBot"
 import GetEventDetails from "../components/GetEventDetails"
 export default function page() {
     
-   return <GetEventDetails/>
+   return (
+      <>
+   <GetEventDetails/>
+      </>
+   )
 }
 
 

@@ -16,13 +16,12 @@ import { setEvent } from '../store/slices/eventSlice'
 
 export default function GetEventDetails(){
     const [eventData,setEventData] = useState([])
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     console.log('env',process.env.NEXT_PUBLIC_API_URL)
 
     useEffect(()=>{
         const getEvent = async()=>{
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events`)
-            console.log('eventresponse',response.data.data)
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/events`)
             setEventData(response.data.data)
           } 
         getEvent()
@@ -30,7 +29,7 @@ export default function GetEventDetails(){
         console.log('event',eventData)
        
   return (
-    <div className="bg-amber-100 text-black font-bold font-serif h-screen pt-10">
+    <div className="bg-white text-black font-bold font-serif h-screen pt-10">
 
     <div className="flex justify-center">
         <div className="bg-red-100 text-lg px-6 py-4 mt-10 rounded-full text-center">

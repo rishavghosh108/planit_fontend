@@ -6,10 +6,9 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import getEventDetails from '../components/GetEventDetails';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../store/slices/eventSlice';
+import { setVerificationToken } from '../store/slices/eventSlice';
 // import { useRouter } from 'next/router';
 
 
@@ -34,7 +33,7 @@ export default function page() {
         initialValues:initialValues,
         validationSchema:loginSchema,
         onSubmit:async (values)=>{
-          await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`,values,{withCredentials:true}).
+          await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/login`,values,{withCredentials:true}).
           then(response=>{
             console.log('response',response);
             //   router.push('/')
@@ -47,7 +46,7 @@ export default function page() {
               //     token = value;
               //   }
               // });
-              dispatch(setToken(token))
+              dispatch(setVerificationToken(token))
               localStorage.setItem('verification',token)
               toast.success("signin Scuuesful!")
               router.push('/otp')
@@ -84,7 +83,7 @@ export default function page() {
                   placeholder="Enter email or phone no"
                 />
                 {errors.email && touched.email && (
-                  <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                  <p className="text-sm absolute text-center w-sm text-red-600 mt-1">{errors.email}</p>
                 )}
                
               </div>
@@ -98,11 +97,11 @@ export default function page() {
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full mb-2 px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   placeholder="••••••••"
                 />
                 {errors.password && touched.password && (
-                  <p className="text-sm text-red-600 mt-1">{errors.password}</p>
+                  <p className="text-sm absolute text-center w-sm  text-red-600 ">{errors.password}</p>
                 )}
               </div>
     

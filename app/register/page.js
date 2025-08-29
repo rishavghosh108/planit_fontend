@@ -1,146 +1,125 @@
 'use client';
-import { useFormik } from 'formik'
-import * as YUP from 'yup'
+import { useFormik } from 'formik';
+import * as YUP from 'yup';
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { GET } from '../api/verify/route';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../store/slices/eventSlice';
+import { setVerificationToken } from '../store/slices/eventSlice';
+
 const initialValues = {
-  name: "",
-  mobile_no: "",
-  email: "",
-  password: "",
-  role_id: ""
-}
-export default function register() {
-  const dispatch = useDispatch()
-  let token = ''
-  const [serverErrors, setServerErrors] = useState(null)
+  name: '',
+  mobile_no: '',
+  email: '',
+  password: '',
+  role_id: ''
+};
+
+export default function Register() {
+  const dispatch = useDispatch();
+  const [serverErrors, setServerErrors] = useState(null);
   const router = useRouter();
+
   const signupSchema = YUP.object({
-    name: YUP.string().required("please enter name").min(3),
-    mobile_no: YUP.string().required('mobile no is required').min(10),
-    email: YUP.string().required('email is required').email(),
-    password: YUP.string().min(6).required('password is required'),
-    role_id: YUP.string().required('role field is required')
-  })
+    name: YUP.string().required('Please enter your name').min(3),
+    mobile_no: YUP.string().required('Mobile number is required').min(10),
+    email: YUP.string().required('Email is required').email().test(
+      'email',
+      'must be a valid email',
+       value=> /\S+@\S+\.\S+/.test(value)
+    ),
+    password: YUP.string().min(8).required('Password is required'),
+    role_id: YUP.string().required('Role selection is required')
+  });
 
   const { errors, values, handleBlur, touched, handleChange, handleSubmit } = useFormik({
-    initialValues: initialValues,
+    initialValues,
     validationSchema: signupSchema,
     onSubmit: async (values) => {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, values, { credentials: 'include' }).then(response => {
-        
-        if (response.status == 200) {
-          Object.entries(response.headers).forEach(([key, value]) => {
-            console.log(`${key}: ${value}`);
-            if(key == 'verification'){
-              token = value;
-            }
-          });
-          dispatch(setToken(token))
-          localStorage.setItem('verification',token)
-          toast.success("signUp Scuuesful!")
-          router.push('/otp')
-
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/signup`, values, { withCredentials: true });
+        if (response.status === 200) {
+          const token = response.headers.verification;
+          dispatch(setVerificationToken(token));
+          localStorage.setItem('verification', token);
+          toast.success('Sign up successful!');
+          router.push('/otp');
         }
-      })
-        .catch(error => {
-          if (error.response && error.response.status === 422) {
-            let errors = error.response.data.errors;
-            console.log(errors);
-            errors ? setServerErrors(errors) : setServerErrors(null)
-
-            console.log(errors.email);
-            console.log(errors.mobile_no);
-            console.log(errors.role_id);
-          } else {
-            console.log('Something else went wrong:', error.message);
-          }
-        })
+      } catch (error) {
+        if (error.response?.status === 422) {
+          setServerErrors(error.response.data.errors);
+        } else {
+          console.error('Error:', error.message);
+        }
+      }
     }
-  })
-  
+  });
+
   return (
-    <div className="bg-gray-400 flex items-center justify-center">
-      <div className="bg-slate-500 p-8 rounded-xl shadow-lg w-full max-w-lg mt-4">
-        <Image className='m-auto mb-1' src='/PlanIt.png' alt="planit image" width={150} height={40} />
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Create Account</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex items-center justify-center py-8 px-4">
+      <div className="bg-white text-black rounded-3xl shadow-2xl p-10 w-md max-w-xl">
+        {/* <div className="flex justify-center mb-4">
+          <Image src="/PlanIt.png" alt="PlanIt Logo" width={140} height={40} />
+        </div> */}
+        <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-6">Sign Up</h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-800 mb-2">Full Name</label>
+            <label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</label>
             <input
               type="text"
               id="name"
               name="name"
               value={values.name}
-              placeholder="Full Name"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               onChange={handleChange}
               onBlur={handleBlur}
+              className={`mt-1 w-full px-4 py-3 border text-black rounded-xl focus:outline-none focus:ring-2 ${touched.name && errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
+              placeholder="Enter your name"
             />
-            {
-              errors.name && touched.name ? (<p className='text-red-900 font-bold '>{errors.name}</p>) : ""
-            }
+            {touched.name && errors.name && <p className="text-red-600 text-sm mt-1 absolute w-sm text-center">{errors.name}</p>}
           </div>
 
-
-          {/* Mobile */}
+          {/* Mobile Number */}
           <div>
-            <label htmlFor="mobile" className="block text-sm font-semibold text-gray-800 mb-2">Mobile Number</label>
+            <label htmlFor="mobile_no" className="text-sm font-medium text-gray-700">Mobile Number</label>
             <input
               type="tel"
-              id="mobile"
+              id="mobile_no"
               name="mobile_no"
               value={values.mobile_no}
-              placeholder="9876543210"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               onChange={handleChange}
               onBlur={handleBlur}
-
+              className={`mt-1 w-full px-4  py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 ${touched.mobile_no && errors.mobile_no? 'border-red-500 focus:ring-red-500' :'border-gray-300 focus:ring-blue-500'}`}
+              placeholder="9876543210"
             />
-            {
-              errors.mobile_no && touched.mobile_no ? (<p className='text-red-900 font-bold '>{errors.mobile_no}</p>) : ""
-            }
-            {
-              serverErrors && serverErrors.mobile_no ? (<p className='text-red-900 font-bold'>{serverErrors.mobile_no[0]}</p>) : ""
-            }
-
+            {touched.mobile_no && errors.mobile_no && <p className="text-red-600 mt-1 absolute w-sm text-center text-sm">{errors.mobile_no}</p>}
+            {serverErrors?.mobile_no && <p className="text-red-600 mt-1">{serverErrors.mobile_no[0]}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">Email Address</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</label>
             <input
               type="email"
               id="email"
               name="email"
               value={values.email}
-              placeholder="you@example.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               onChange={handleChange}
               onBlur={handleBlur}
+              className={`mt-1 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 ${touched.email && errors.email? 'border-red-500 focus:ring-red-500': 'border-gray-300 focus:ring-blue-500'}`}
+              placeholder="you@example.com"
             />
-            {
-              errors.email && touched.email ? (<p className='text-red-900 font-bold '>{errors.email}</p>) : ""
-            }
-            {
-              serverErrors && serverErrors.email ? (<p className='text-red-900 font-bold'>{serverErrors.email[0]}</p>) : ""
-            }
-
+            {touched.email && errors.email && <p className="text-red-600 mt-1 text-sm absolute w-sm text-center">{errors.email}</p>}
+            {serverErrors?.email && <p className="text-red-600 mt-1">{serverErrors.email[0]}</p>}
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">Password</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               id="password"
@@ -148,50 +127,45 @@ export default function register() {
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
-              placeholder="Create a password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className={`mt-1 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 ${touched.password && errors.password? 'border-red-500 focus:ring-red-500':' border-gray-300 focus:ring-blue-500'}`}
+              placeholder="Create a strong password"
             />
-            {
-              errors.password && touched.password ? (<p className='text-red-900 font-bold '>{errors.password}</p>) : ""
-            }
+            {touched.password && errors.password && <p className="text-red-600 mt-1 absolute text-sm  w-sm text-center">{errors.password}</p>}
           </div>
-
 
           {/* Role */}
           <div>
-            <label htmlFor="role" className="block text-sm font-semibold text-gray-800 mb-2">Register As</label>
+            <label htmlFor="role_id" className="text-sm font-medium text-gray-700">Register As</label>
             <select
-              id="role"
+              id="role_id"
               name="role_id"
               value={values.role_id}
               onChange={handleChange}
               onBlur={handleBlur}
-
-              className="w-full px-4 py-3 border border-slate-300 text-black rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
             >
-              <option value="">Select role</option>
+              <option value="">Select Role</option>
               <option value="1">User</option>
               <option value="2">Planner</option>
             </select>
-            {
-              errors.role_id && touched.role_id ? (<p className='text-red-900 font-bold '>{errors.role_id}</p>) : ""
-            }
+            {touched.role_id && errors.role_id && <p className="text-red-600 mt-1">{errors.role_id}</p>}
+            {serverErrors?.role_id && <p className="text-red-600 mt-1">{serverErrors.role_id[0]}</p>}
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full cursor-pointer py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition duration-300"
           >
             Register
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-800 mt-3">
+        <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{' '}
-          <Link href="/login" className="text-orange-400 font-bold text-lg hover:underline">Login</Link>
+          <Link href="/login" className="text-blue-500 hover:underline font-medium">Login</Link>
         </p>
       </div>
     </div>
-  )
+  );
 }

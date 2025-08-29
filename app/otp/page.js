@@ -9,7 +9,7 @@ import { NextRequest,NextResponse } from 'next/server'
 import { GetToken } from '../api/verify/route'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
-import { setToken } from '../store/slices/eventSlice'
+import { setAuthoRizationToken, setVerificationToken} from '../store/slices/eventSlice'
 const initialValues = {
     otp:""
 }
@@ -19,7 +19,7 @@ export default function otp() {
   const dispatch = useDispatch()
    useEffect(()=>{
       const token =  localStorage.getItem('verification')
-      dispatch(setToken(token))
+      dispatch(setVerificationToken(token))
      },[])
      const token = useSelector((state)=>state.user.verification)
     console.log('token',token)
@@ -32,18 +32,24 @@ export default function otp() {
     validationSchema:otpVerifySchema,
     onSubmit:async(values)=>{
         console.log('value',values)
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/verify`,values,{withCredentials:true,
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL_SYSTEM}/verify`,values,{withCredentials:true,
         headers:{
           'verification':`${token}`,
           'Content-Type': 'application/json',
           
       }})
-      console.log("verify",response)
+      // console.log("verify",response.headers)
       if(response.status == 200){
+        // Object.entries(response.headers).forEach(([key, value]) => {
+        //   console.log(`${key}: ${value}`);
+        // });
+        let authorizationToken = response.headers['authorization'];
+         dispatch(setAuthoRizationToken(authorizationToken))
+         localStorage.setItem('authorization',authorizationToken)
         toast.success('Otp Verification successful')
         console.log('otp response',response)
         localStorage.removeItem('verification')
-        dispatch(setToken(null))
+        dispatch(setVerificationToken(null))
         router.push('/dashboard')
       }
     }

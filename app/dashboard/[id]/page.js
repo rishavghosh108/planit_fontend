@@ -26,17 +26,17 @@ const VendorPage = () => {
     console.log('event',eventData)
 
   const vendors = [
-    'Beauty',
-    'Bridal Salons',
-    'Caterers',
-    'Florists',
-    'Officiants',
-    'Transportation',
-    'Rentals',
-    'Venues',
-    'Videographers',
-    'Wedding Planners',
-    'View all'
+    // 'Beauty',
+    // 'Bridal Salons',
+    // 'Caterers',
+    // 'Florists',
+    // 'Officiants',
+    // 'Transportation',
+    // 'Rentals',
+    // 'Venues',
+    // 'Videographers',
+    // 'Wedding Planners',
+    // 'View all'
   ]
   console.log('vendor',eventData)
   const params = useParams();
@@ -48,8 +48,8 @@ const VendorPage = () => {
   return (
     <>
     {currentEvent? (
-    <main className="p-8 space-y-8 min-h-screen bg-cover flex flex-col"
-    style={{ backgroundImage: `url(${currentEvent.file_path})` }}
+    <main className="min-h-screen overflow-hidden bg-cover bg-no-repeat bg-center flex flex-col space-y-8"
+    style={{backgroundImage: `url(${currentEvent.file_path})`}}
     >
       {/* Top banner */}
       <div className="bg-gray-400 max-w-lg min-w-2xl text-center m-auto p-4 font-bold text-lg text-black rounded-lg">
@@ -58,12 +58,15 @@ const VendorPage = () => {
 
       {/* Invitation buttons */}
       <div className="flex flex-col items-center space-y-4">
-        <Link href={`/dashboard/${params.id}/cards`} className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
-          Generate digital invitation card
+        <Link href={`/dashboard/${params.id}/checklist`} className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
+          Generate Checklist
         </Link>
         <button className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
           Import a guest list
         </button>
+        <Link href={`/dashboard/${params.id}/cards`} className="bg-gray-300 px-6 py-2 text-lg text-black cursor-pointer rounded-lg">
+          Generate digital invitation card
+        </Link>
       </div>
 
       {/* Vendor grid */}
